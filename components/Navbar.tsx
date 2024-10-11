@@ -154,7 +154,7 @@ export default function DrawerAppBar(props: Props) {
                             </Select>
                         </FormControl>
                     </Box>
-                    
+
                     <Box sx={{ flex: 1, display: 'flex', justifyContent: 'right', alignItems: 'center'}}>
                         <ClickAwayListener onClickAway={handleHelpClickAway}>
                             <Box sx={{ position: 'relative' }}>
@@ -183,10 +183,10 @@ export default function DrawerAppBar(props: Props) {
                                     }}
                                 >
                                     <Typography sx={{ p: 2 }}>
-                                        To classify, input the measurement of each element of each sample for each row. For multiple samples, you can add rows by clicking "Add row". To see the classifications, click "Classify". The best classification for each row will appear, labeled by row number. If our algorithm does not find a classification given the provided values, the sample will be considered ungrouped.
+                                        To classify, input the measurement of each element of each sample for each row. For multiple samples, you can add rows by clicking &quot;Add row&quot;. To see the classifications, click &quot;Classify&quot;. The best classification for each row will appear, labeled by row number. If our algorithm does not find a classification given the provided values, the sample will be considered ungrouped.
                                     </Typography>
                                     <Typography sx={{ p: 2 }}>
-                                        To plot, input the measurement of each element of each sample for each row, then click "Plot". This tool also supports pasted input from spreadsheet applications such as Microsoft Excel. Once the plot is rendered, specific points can be examined by hovering with your mouse. The default x- and y-axes are Ni and Co respectively, but can be selected using the dropdowns on the bottom left. The color of the points can also be altered using the color picker.
+                                        To plot, input the measurement of each element of each sample for each row, then click &quot;Plot&quot;. This tool also supports pasted input from spreadsheet applications such as Microsoft Excel. Once the plot is rendered, specific points can be examined by hovering with your mouse. The default x- and y-axes are Ni and Co respectively, but can be selected using the dropdowns on the bottom left. The color of the points can also be altered using the color picker.
                                     </Typography>
                                 </Popover>
                             </Box>

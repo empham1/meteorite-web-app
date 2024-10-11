@@ -350,7 +350,7 @@ const Classify: React.FC = () => {
     };
     const classifyHelper = results.map((result, index) => {
         return (
-            <Typography className='text-xl'>
+            <Typography key={index + 1} className='text-xl'>
                 Row {index + 1}: {result}
             </Typography>
         );
