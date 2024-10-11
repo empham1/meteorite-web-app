@@ -48,9 +48,6 @@ const Plot: React.FC = () => {
     }, [xIndex, yIndex]);
 
     const handlePlot = () => {
-        console.log('handle plot called');
-        console.log(typeof yIndex); // Should be 'number'
-        console.log(yIndex); // Should be 0, 1, 2, or 3
 
         const plotData = data
             .map((row, index) => {
@@ -58,8 +55,6 @@ const Plot: React.FC = () => {
                 const y = row[yIndex]?.value;
                 const invalidX = x === null || x === undefined || x.trim() === '' || isNaN(Number(x))
                 const invalidY = y === null || y === undefined || y.trim() === '' || isNaN(Number(y))
-                if (invalidX){console.log('invalid X')};
-                if (invalidY){console.log('invalid Y')};
                 return !invalidX && !invalidY ? { id: index, x: x as number, y: y as number } : null;
             })
             .filter(point => point !== null);
@@ -101,7 +96,7 @@ const Plot: React.FC = () => {
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                value={xIndex}
+                                value={xIndex.toString()}
                                 label="X-Axis"
                                 onChange={handleXChange}
                             >
@@ -120,7 +115,7 @@ const Plot: React.FC = () => {
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                value={yIndex}
+                                value={yIndex.toString()}
                                 label="Y-Axis"
                                 onChange={handleYChange}
                             >
