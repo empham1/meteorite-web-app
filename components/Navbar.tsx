@@ -24,7 +24,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { useRouter } from 'next/navigation';
-import { ModeComment } from '@material-ui/icons';
 
 import Image from 'next/image';
 
