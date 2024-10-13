@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<div align="center">
 
-## Getting Started
+# Iron Meteorite Online Tool 
 
-First, run the development server:
+An all-in-one tool for classifying and plotting iron meteorite data, designed for researchers and students.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+ <a href="https://meteorite-web-app.vercel.app/"><strong>View Demo »</strong></a>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+</div>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 💡 About This Tool
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+The motivation behind this project was to leverage UCLA's existing iron meteorite database to provide insights to the academic community. Our team's objectives included enabling efficient preliminary classification of iron meteorite samples as well as convenient visualization of data that could be compared to the existing database.
 
-## Learn More
+This tool requires users to have data pertaining to the content of specific elements of an iron meteorite sample. Note that this tool accepts input in specific units of measurements.
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ✨ Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Classify
 
-## Deploy on Vercel
+This tool classifies iron meteorite samples into one of 11 distinct classes based on their Nickel, Cobalt, Gallium, and Germanium content. Users can perform multiple classifications simultaneously for enhanced efficiency.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+<p align="center">
+  <img src="public/classify-screenshot.png" alt="Classify screenshot" />
+</p>
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Plot
+
+Additionally, this tool can plot the sample data of six elements against one another. Users can manually input their data into the spreadsheet interface or paste data from other spreadsheet applications. When plotted, users can examine specific points by hovering over them. The plot is customizable, allowing users to modify the plot color, as well as x-axis and y-axis options to suit their needs.
+
+
+<p align="center">
+  <img src="public/plot-screenshot.png" alt="Plot screenshot" />
+</p>
