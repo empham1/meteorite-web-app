@@ -228,7 +228,8 @@ const Plot: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="flex justify-between">
+      {/* <div className="flex justify-between"> */}
+      <div className="flex justify-between px-6 py-3">
         <Box sx={{ minWidth: 120 }}>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">X-Axis</InputLabel>
@@ -302,8 +303,8 @@ const Plot: React.FC = () => {
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
-        <Box>
-          <Grid item className='w-3/5'>
+        <Box sx={{ maxWidth: 120 }}>
+          <Grid item>
             <TextField
               type="number"
               label="X Min"
@@ -315,8 +316,8 @@ const Plot: React.FC = () => {
             />
           </Grid>
         </Box>
-        <Box>
-          <Grid item className='w-3/5'>
+        <Box sx={{ maxWidth: 120 }}>
+          <Grid item>
             <TextField
               type="number"
               label="Y Min"
