@@ -90,7 +90,7 @@ const Plot: React.FC = () => {
   const [xIndex, setXIndex] = useState<number>(0); // Default to the first column
   const [yIndex, setYIndex] = useState<number>(1); // Default to the second column
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]); // To track selected categories
-  const [xMin, setXMin] = useState<number | string>(''); 
+  const [xMin, setXMin] = useState<number | string>('');
   const [xMinError, setXMinError] = useState<string>("");  // Error state while inputting x min
   const [xMinFinal, setXMinFinal] = useState<number>(0.0001); // Default to a small number
   const [yMin, setYMin] = useState<number | string>('');
@@ -109,19 +109,6 @@ const Plot: React.FC = () => {
     setXMinFinal(xMinVal);
     const yMinVal = (parseFloat(yMin.toString()) > 0) ? (parseFloat(yMin.toString())) : 0.01;
     setYMinFinal(yMinVal);
-
-    // Plot data for user input
-    const plotData = data
-      .map((row, index) => {
-        const x = row[xIndex]?.value;
-        const y = row[yIndex]?.value;
-        const invalidX = x === null || x === undefined || x.trim() === "" || isNaN(Number(x));
-        const invalidY = y === null || y === undefined || y.trim() === "" || isNaN(Number(y));
-        return !invalidX && !invalidY ? { id: index, x: x as number, y: y as number } : null;
-      })
-      .filter((point) => point !== null);
-
-    setPlotData(plotData as { id: number; x: number; y: number }[]);
 
     const overlayData = selectedCategories.map((category, index) => {
       const filteredCategory = uclaData.filter(item => item.label === category);
@@ -144,6 +131,19 @@ const Plot: React.FC = () => {
     }).flat();
 
     setOverlayData(overlayData as { id: number; x: number; y: number; color: string; label: string }[]);
+
+    // Plot data for user input
+    const plotData = data
+      .map((row, index) => {
+        const x = row[xIndex]?.value;
+        const y = row[yIndex]?.value;
+        const invalidX = x === null || x === undefined || x.trim() === "" || isNaN(Number(x));
+        const invalidY = y === null || y === undefined || y.trim() === "" || isNaN(Number(y));
+        return !invalidX && !invalidY ? { id: index, x: x as number, y: y as number } : null;
+      })
+      .filter((point) => point !== null);
+
+    setPlotData(plotData as { id: number; x: number; y: number }[]);
   };
 
   const handleXChange = (event: SelectChangeEvent) => {
@@ -210,13 +210,22 @@ const Plot: React.FC = () => {
             <ScatterChart
               width={600}
               xAxis={[
-                { scaleType: 'log', label: colNames[xIndex], min: xMinFinal, valueFormatter: valueFormatter },
+                {
+                  scaleType: 'log',
+                  label: colNames[xIndex],
+                  min: xMinFinal,
+                  valueFormatter: valueFormatter,
+                },
               ]}
               yAxis={[
-                { scaleType: 'log', label: colNames[yIndex], min: yMinFinal, valueFormatter: valueFormatter },
+                {
+                  scaleType: 'log',
+                  label: colNames[yIndex],
+                  min: yMinFinal,
+                  valueFormatter: valueFormatter,
+                },
               ]}
               series={[
-                { data: plotData, color, label: 'Input' },
                 ...(overlayData
                   ? overlayData.map((categoryData, index) => ({
                     data: [{ x: categoryData.x, y: categoryData.y, id: categoryData.id }],
@@ -224,13 +233,15 @@ const Plot: React.FC = () => {
                     key: index,
                     label: categoryData.label,
                   }))
-                  : []), // Overlay selected categories
-
+                  : []),
+                // Now `plotData` is added last (rendered on top)
+                { data: plotData, color, label: 'Input' },
               ]}
               {...otherSetting}
               slotProps={{ legend: { hidden: true } }}
             />
           )}
+
         </div>
       </div>
       {/* <div className="flex justify-between"> */}
@@ -339,7 +350,7 @@ const Plot: React.FC = () => {
           <Checkbox checked={horizontalGridLines} onChange={handleHorizontalGridLines} />
           <ListItemText primary={'Show Horizontal Grid Lines'} />
         </MenuItem>
-        
+
         <MenuItem>
           <Checkbox checked={verticalGridLines} onChange={handleVerticalGridLines} />
           <ListItemText primary={'Show Vertical Grid Lines'} />
