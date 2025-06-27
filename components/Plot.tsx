@@ -96,7 +96,8 @@ const Plot: React.FC = () => {
   const [yMin, setYMin] = useState<number | string>('');
   const [yMinError, setYMinError] = useState<string>("");  // Error state while inputting y min
   const [yMinFinal, setYMinFinal] = useState<number>(0.0001); // Default to a small number
-  const [gridLines, setGridLines] = useState<boolean>(false);
+  const [horizontalGridLines, setHorizontalGridLines] = useState<boolean>(false);
+  const [verticalGridLines, setVerticalGridLines] = useState<boolean>(false);
 
   useEffect(() => {
     handlePlot();
@@ -173,9 +174,13 @@ const Plot: React.FC = () => {
       setYMinError("Please enter a number greater than 0");
     }
   };
-  const handleGridLines = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHorizontalGridLines = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Update the state variable based on whether the checkbox is checked
-    setGridLines(event.target.checked);
+    setHorizontalGridLines(event.target.checked);
+  };
+  const handleVerticalGridLines = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Update the state variable based on whether the checkbox is checked
+    setVerticalGridLines(event.target.checked);
   };
   const handleCategoryChange = (event: SelectChangeEvent<typeof selectedCategories>) => {
     setSelectedCategories(event.target.value as string[]);
@@ -183,7 +188,7 @@ const Plot: React.FC = () => {
 
   const otherSetting = {
     height: 400,
-    grid: { horizontal: gridLines },
+    grid: { horizontal: horizontalGridLines, vertical: verticalGridLines },
     sx: {
       [`& .${axisClasses.left} .${axisClasses.label}`]: {
         transform: "translateX(-10px)",
@@ -331,8 +336,13 @@ const Plot: React.FC = () => {
         </Box>
 
         <MenuItem>
-          <Checkbox checked={gridLines} onChange={handleGridLines} />
-          <ListItemText primary={'Show Grid Lines'} />
+          <Checkbox checked={horizontalGridLines} onChange={handleHorizontalGridLines} />
+          <ListItemText primary={'Show Horizontal Grid Lines'} />
+        </MenuItem>
+        
+        <MenuItem>
+          <Checkbox checked={verticalGridLines} onChange={handleVerticalGridLines} />
+          <ListItemText primary={'Show Vertical Grid Lines'} />
         </MenuItem>
 
 
