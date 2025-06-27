@@ -315,7 +315,7 @@ function runAllTests(gaVal: number, geVal: number, niVal: number, coVal: number)
 }
 
 const Classify: React.FC = () => {
-    const [rows, setRows] = useState<Meteorite[]>([{ id: 0, ni: 0, co: 0, ga: 0, ge: 0, structure: "" }, { id: 1, ni: 0, co: 0, ga: 0, ge: 0, structure: "" }]);
+    const [rows, setRows] = useState<Meteorite[]>([{ id: 0, ni: 0, co: 0, ga: 0, ge: 0, structure: "" }]);
     const [results, setResults] = useState<String[]>([]);
     const handleChange = (id: number, field: string, value: number | string) => {
         setRows(prevRows =>
