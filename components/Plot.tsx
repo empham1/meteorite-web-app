@@ -93,9 +93,15 @@ const Plot: React.FC = () => {
   const [xMin, setXMin] = useState<number | string>('');
   const [xMinError, setXMinError] = useState<string>("");  // Error state while inputting x min
   const [xMinFinal, setXMinFinal] = useState<number>(0.0001); // Default to a small number
+  const [xMax, setXMax] = useState<number | string>('');
+  const [xMaxError, setXMaxError] = useState<string>("");  // Error state while inputting x min
+  const [xMaxFinal, setXMaxFinal] = useState<number>(0.0001); // Default to a small number
   const [yMin, setYMin] = useState<number | string>('');
   const [yMinError, setYMinError] = useState<string>("");  // Error state while inputting y min
   const [yMinFinal, setYMinFinal] = useState<number>(0.0001); // Default to a small number
+  const [yMax, setYMax] = useState<number | string>('');
+  const [yMaxError, setYMaxError] = useState<string>("");  // Error state while inputting y min
+  const [yMaxFinal, setYMaxFinal] = useState<number>(0.0001); // Default to a small number
   const [horizontalGridLines, setHorizontalGridLines] = useState<boolean>(false);
   const [verticalGridLines, setVerticalGridLines] = useState<boolean>(false);
 
@@ -104,12 +110,6 @@ const Plot: React.FC = () => {
   }, [xIndex, yIndex, selectedCategories]); // Re-run on changes to selected categories
 
   const handlePlot = () => {
-    // Check if xMin is a valid number, set to default otherwise
-    const xMinVal = (parseFloat(xMin.toString()) > 0) ? (parseFloat(xMin.toString())) : 0.01;
-    setXMinFinal(xMinVal);
-    const yMinVal = (parseFloat(yMin.toString()) > 0) ? (parseFloat(yMin.toString())) : 0.01;
-    setYMinFinal(yMinVal);
-
     const overlayData = selectedCategories.map((category, index) => {
       const filteredCategory = uclaData.filter(item => item.label === category);
       console.log(category);
@@ -144,6 +144,50 @@ const Plot: React.FC = () => {
       .filter((point) => point !== null);
 
     setPlotData(plotData as { id: number; x: number; y: number }[]);
+
+    const [defaultMinX, defaultMaxX, defaultMinY, defaultMaxY] = calculateBounds();
+    // Check if xMin is a valid number, set to default otherwise
+    const xMinVal = (parseFloat(xMin.toString()) > 0) ? (parseFloat(xMin.toString())) : defaultMinX;
+    const yMinVal = (parseFloat(yMin.toString()) > 0) ? (parseFloat(yMin.toString())) : defaultMinY;
+    const xMaxVal = (parseFloat(xMax.toString()) > 0) ? (parseFloat(xMax.toString())) : defaultMaxX;
+    const yMaxVal = (parseFloat(yMax.toString()) > 0) ? (parseFloat(yMax.toString())) : defaultMaxY;
+    setXMinFinal(xMinVal);
+    setYMinFinal(yMinVal);
+    setXMaxFinal(xMaxVal);
+    setYMaxFinal(yMaxVal);
+    console.log(xMinVal);
+    console.log(yMinVal);
+    console.log(xMaxVal);
+    console.log(yMaxVal);
+  };
+
+  const calculateBounds = (): [number, number, number, number] => {
+    const overlayX = overlayData?.map(item => item.x) || [];
+    const plotX = plotData?.map(item => item.x) || [];
+  
+    const overlayY = overlayData?.map(item => item.y) || [];
+    const plotY = plotData?.map(item => item.y) || [];
+  
+    const allX = [...overlayX, ...plotX];
+    const allY = [...overlayY, ...plotY];
+    console.log(allX)
+  
+    const minX = allX.length ? Math.min(...allX) : Infinity;
+    const maxX = allX.length ? Math.max(...allX) : -Infinity;
+  
+    const minY = allY.length ? Math.min(...allY) : Infinity;
+    const maxY = allY.length ? Math.max(...allY) : -Infinity;
+  
+    const xRange = maxX - minX;
+    const yRange = maxY - minY;
+  
+    const paddedMinX = minX - (xRange * 0.2) > 0 ? minX - (xRange * 0.2) : minX;
+    const paddedMaxX = maxX + xRange * 0.2;
+  
+    const paddedMinY = minY - (yRange * 0.2) > 0 ? minY - (yRange * 0.2) : minY;
+    const paddedMaxY = maxY + yRange * 0.2;
+  
+    return [paddedMinX, paddedMaxX, paddedMinY, paddedMaxY];
   };
 
   const handleXChange = (event: SelectChangeEvent) => {
@@ -155,25 +199,43 @@ const Plot: React.FC = () => {
   const handleXMin = (value: number | string) => {
     setXMin(value);
     const parsedValue = parseFloat(value.toString());
-    // Check if the parsed value is a valid number and greater than 0
-    if (!isNaN(parsedValue) && parsedValue > 0) {  // Update the state with the new value
-      setXMinError("");  // Clear error message
+    if (!isNaN(parsedValue) && parsedValue > 0) {
+      setXMinError("");
     } else {
-      // Show an error message or keep the previous valid value
       setXMinError("Please enter a number greater than 0");
     }
   };
+
+  const handleXMax = (value: number | string) => {
+    setXMax(value);
+    const parsedValue = parseFloat(value.toString());
+    if (!isNaN(parsedValue) && parsedValue > 0) {
+      setXMaxError("");
+    } else {
+      setXMaxError("Please enter a number greater than 0");
+    }
+  };
+
   const handleYMin = (value: number | string) => {
     setYMin(value);
     const parsedValue = parseFloat(value.toString());
-    // Check if the parsed value is a valid number and greater than 0
-    if (!isNaN(parsedValue) && parsedValue > 0) {  // Update the state with the new value
-      setYMinError("");  // Clear error message
+    if (!isNaN(parsedValue) && parsedValue > 0) {
+      setYMinError("");
     } else {
-      // Show an error message or keep the previous valid value
       setYMinError("Please enter a number greater than 0");
     }
   };
+
+  const handleYMax = (value: number | string) => {
+    setYMax(value);
+    const parsedValue = parseFloat(value.toString());
+    if (!isNaN(parsedValue) && parsedValue > 0) {
+      setYMaxError("");
+    } else {
+      setYMaxError("Please enter a number greater than 0");
+    }
+  };
+
   const handleHorizontalGridLines = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Update the state variable based on whether the checkbox is checked
     setHorizontalGridLines(event.target.checked);
@@ -184,6 +246,8 @@ const Plot: React.FC = () => {
   };
   const handleCategoryChange = (event: SelectChangeEvent<typeof selectedCategories>) => {
     setSelectedCategories(event.target.value as string[]);
+    handlePlot();
+    console.log(overlayData);
   };
 
   const otherSetting = {
@@ -214,6 +278,7 @@ const Plot: React.FC = () => {
                   scaleType: 'log',
                   label: colNames[xIndex],
                   min: xMinFinal,
+                  max: xMaxFinal,
                   valueFormatter: valueFormatter,
                 },
               ]}
@@ -222,6 +287,7 @@ const Plot: React.FC = () => {
                   scaleType: 'log',
                   label: colNames[yIndex],
                   min: yMinFinal,
+                  max: yMaxFinal,
                   valueFormatter: valueFormatter,
                 },
               ]}
@@ -341,6 +407,32 @@ const Plot: React.FC = () => {
               onChange={e => handleYMin(e.target.value)}
               error={!!yMinError}  // Show error state if there's an error message
               helperText={yMinError}  // Display the error message
+              fullWidth
+            />
+          </Grid>
+        </Box>
+        <Box sx={{ maxWidth: 120 }}>
+          <Grid item>
+            <TextField
+              type="number"
+              label="X Max"
+              value={xMax}
+              onChange={e => handleXMax(e.target.value)}
+              error={!!xMaxError}  // Show error state if there's an error message
+              helperText={xMaxError}  // Display the error message
+              fullWidth
+            />
+          </Grid>
+        </Box>
+        <Box sx={{ maxWidth: 120 }}>
+          <Grid item>
+            <TextField
+              type="number"
+              label="Y Max"
+              value={yMax}
+              onChange={e => handleYMax(e.target.value)}
+              error={!!yMaxError}  // Show error state if there's an error message
+              helperText={yMaxError}  // Display the error message
               fullWidth
             />
           </Grid>
