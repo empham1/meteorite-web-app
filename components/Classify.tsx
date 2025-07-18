@@ -488,7 +488,7 @@ function runAllFiveTests(gaVal: number, geVal: number, niVal: number, coVal: num
 }
 
 const Classify: React.FC = () => {
-    const [rows, setRows] = useState<Meteorite[]>([{ id: 0, ni: 0, co: 0, ga: 0, ge: 0, structure: "" }]);
+    const [rows, setRows] = useState<Meteorite[]>([{ id: 0, ni: 165.3, co: 7.46, ga: 0.192, ge: 0.050, structure: "" }]);
     const [results, setResults] = useState<String[]>([]);
     const handleChange = (id: number, field: string, value: number | string) => {
         setRows(prevRows =>
@@ -524,7 +524,7 @@ const Classify: React.FC = () => {
                 console.log(allTests);
                 if (Object.values(allTests).includes(4)) {
                     for (var k in allTests) {
-                        if (allTests[k as keyof object] == 4)finalResultArr.push(k);
+                        if (allTests[k as keyof object] == 4) finalResultArr.push(k);
                     }
                     finalResult = finalResultArr.join(', ');
                 } else {
@@ -536,13 +536,29 @@ const Classify: React.FC = () => {
         setResults(nextResults);
 
     };
-    const classifyHelper = results.map((result, index) => {
-        return (
-            <Typography key={index + 1} className='text-xl'>
+    
+    const classifyHelper = results.length === 0 ? (
+        <div>
+            <Typography className='text-lg mb-4'>
+                To classify, input the measurement of each element of each sample for each row, then click "Classify".
+                For multiple samples, you can add rows by clicking "Add row".
+                The structural class is optional, but will be considered if inputted.
+            </Typography>
+            <Typography className='text-lg mb-4'>
+                The best classification for each row will appear, labeled by row number.
+                If our algorithm does not find a classification given the provided values, the sample will be considered ungrouped.
+            </Typography>
+            <Typography className='text-lg mb-4'>
+                The values for the meteorite Hoba have been provided as an example.
+            </Typography>
+        </div>
+    ) : (
+        results.map((result, index) => (
+            <Typography key={index} className='text-xl'>
                 Row {index + 1}: {result}
             </Typography>
-        );
-    });
+        ))
+    );
 
     return (
         <div className="grid grid-cols-2 gap-3">
