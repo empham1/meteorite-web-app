@@ -540,8 +540,8 @@ const Classify: React.FC = () => {
     const classifyHelper = results.length === 0 ? (
         <div>
             <Typography className='text-lg mb-4'>
-                To classify, input the measurement of each element of each sample for each row, then click "Classify".
-                For multiple samples, you can add rows by clicking "Add row".
+                To classify, input the measurement of each element of each sample for each row, then click &quot;Classify&quot;.
+                For multiple samples, you can add rows by clicking &quot;Add row&quot;.
                 The structural class is optional, but will be considered if inputted.
             </Typography>
             <Typography className='text-lg mb-4'>
