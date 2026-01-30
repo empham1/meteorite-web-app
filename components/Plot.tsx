@@ -14,6 +14,8 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import uclaData from '../public/data.json';
+import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import Popover from '@mui/material/Popover';
 
 const valueFormatter = (value: number) => {
   // Format the value in scientific notation
@@ -164,29 +166,29 @@ const Plot: React.FC = () => {
   const calculateBounds = (): [number, number, number, number] => {
     const overlayX = overlayData?.map(item => item.x) || [];
     const plotX = plotData?.map(item => item.x) || [];
-  
+
     const overlayY = overlayData?.map(item => item.y) || [];
     const plotY = plotData?.map(item => item.y) || [];
-  
+
     const allX = [...overlayX, ...plotX];
     const allY = [...overlayY, ...plotY];
     console.log(allX)
-  
+
     const minX = allX.length ? Math.min(...allX) : Infinity;
     const maxX = allX.length ? Math.max(...allX) : -Infinity;
-  
+
     const minY = allY.length ? Math.min(...allY) : Infinity;
     const maxY = allY.length ? Math.max(...allY) : -Infinity;
-  
+
     const xRange = maxX - minX;
     const yRange = maxY - minY;
-  
+
     const paddedMinX = minX - (xRange * 0.2) > 0 ? minX - (xRange * 0.2) : minX;
     const paddedMaxX = maxX + xRange * 0.2;
-  
+
     const paddedMinY = minY - (yRange * 0.2) > 0 ? minY - (yRange * 0.2) : minY;
     const paddedMaxY = maxY + yRange * 0.2;
-  
+
     return [paddedMinX, paddedMaxX, paddedMinY, paddedMaxY];
   };
 
@@ -260,15 +262,28 @@ const Plot: React.FC = () => {
     },
   };
 
+  const [moreSettingsOpen, setMoreSettingsOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleMoreSettingsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+    setMoreSettingsOpen((prev) => !prev);
+  };
+
+  const handleMoreSettingsClickAway = () => {
+    setAnchorEl(null);
+    setMoreSettingsOpen(false);
+  };
+
   return (
-    <div>
+    <div className="h-screen">
       <div className="grid grid-cols-2 gap-3">
         <div className="my-3 overflow-auto">
           <Toolbar />
           <Spreadsheet columnLabels={colNames} data={data} onChange={setData} />
         </div>
 
-        <div className="flex flex-col h-screen items-center justify-center mx-10">
+        <div className="flex flex-col items-center justify-center mx-10">
           <Toolbar />
           {plotData && (
             <ScatterChart
@@ -310,151 +325,201 @@ const Plot: React.FC = () => {
 
         </div>
       </div>
-      {/* <div className="flex justify-between"> */}
-      <div className="flex justify-between px-6 py-3">
-        <Box sx={{ minWidth: 120 }}>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">X-Axis</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={xIndex.toString()}
-              label="X-Axis"
-              onChange={handleXChange}
-            >
-              {colNames.map((col, index) => (
-                <MenuItem key={index} value={index}>
-                  {col}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-        <Box sx={{ minWidth: 120 }}>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Y-Axis</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={yIndex.toString()}
-              label="Y-Axis"
-              onChange={handleYChange}
-            >
-              {colNames.map((col, index) => (
-                <MenuItem key={index} value={index}>
-                  {col}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
+      <div className="flex justify-center">
+        <div className="flex gap-4 px-6 py-3">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">X-Axis</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={xIndex.toString()}
+                label="X-Axis"
+                onChange={handleXChange}
+              >
+                {colNames.map((col, index) => (
+                  <MenuItem key={index} value={index}>
+                    {col}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Y-Axis</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={yIndex.toString()}
+                label="Y-Axis"
+                onChange={handleYChange}
+              >
+                {colNames.map((col, index) => (
+                  <MenuItem key={index} value={index}>
+                    {col}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
 
-        <Box sx={{ minWidth: 120 }}>
-          <FormControl fullWidth>
-            <InputLabel id="category-select-label">Classes</InputLabel>
-            <Select
-              labelId="category-select-label"
-              id="category-select"
-              multiple
-              value={selectedCategories}
-              label="Classes"
-              onChange={handleCategoryChange}
-              renderValue={(selected) => selected.join(", ")}
-            >
-              {categoryNames.map((col, index) => (
-                <MenuItem key={index} value={col}>
-                  <Checkbox checked={selectedCategories.indexOf(col) > -1} />
-                  <ListItemText primary={col} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="category-select-label">Classes</InputLabel>
+              <Select
+                labelId="category-select-label"
+                id="category-select"
+                multiple
+                value={selectedCategories}
+                label="Classes"
+                onChange={handleCategoryChange}
+                renderValue={(selected) => selected.join(", ")}
+              >
+                {categoryNames.map((col, index) => (
+                  <MenuItem key={index} value={col}>
+                    <Checkbox checked={selectedCategories.indexOf(col) > -1} />
+                    <ListItemText primary={col} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
 
-        <ToggleButtonGroup value={color} exclusive onChange={handleColorChange}>
-          {classic.map((value) => (
-            <ToggleButton key={value} value={value} sx={{ p: 1 }}>
-              <div
-                style={{
-                  width: 15,
-                  height: 15,
-                  backgroundColor: value,
-                  display: "inline-block",
-                }}
-              />
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-        <Box sx={{ maxWidth: 120 }}>
-          <Grid item>
-            <TextField
-              type="number"
-              label="X Min"
-              value={xMin}
-              onChange={e => handleXMin(e.target.value)}
-              error={!!xMinError}  // Show error state if there's an error message
-              helperText={xMinError}  // Display the error message
-              fullWidth
-            />
-          </Grid>
-        </Box>
-        <Box sx={{ maxWidth: 120 }}>
-          <Grid item>
-            <TextField
-              type="number"
-              label="Y Min"
-              value={yMin}
-              onChange={e => handleYMin(e.target.value)}
-              error={!!yMinError}  // Show error state if there's an error message
-              helperText={yMinError}  // Display the error message
-              fullWidth
-            />
-          </Grid>
-        </Box>
-        <Box sx={{ maxWidth: 120 }}>
-          <Grid item>
-            <TextField
-              type="number"
-              label="X Max"
-              value={xMax}
-              onChange={e => handleXMax(e.target.value)}
-              error={!!xMaxError}  // Show error state if there's an error message
-              helperText={xMaxError}  // Display the error message
-              fullWidth
-            />
-          </Grid>
-        </Box>
-        <Box sx={{ maxWidth: 120 }}>
-          <Grid item>
-            <TextField
-              type="number"
-              label="Y Max"
-              value={yMax}
-              onChange={e => handleYMax(e.target.value)}
-              error={!!yMaxError}  // Show error state if there's an error message
-              helperText={yMaxError}  // Display the error message
-              fullWidth
-            />
-          </Grid>
-        </Box>
+          <div className="border border-[rgba(195,195,195,1)] hover:border-black rounded-md">
+            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+              <ClickAwayListener onClickAway={handleMoreSettingsClickAway}>
+                <Box sx={{ position: 'relative' }}>
+                  <Button type="button" sx={{ color: '#000' }} onClick={handleMoreSettingsClick}>
+                    More Settings
+                  </Button>
+                  <Popover
+                    open={moreSettingsOpen}
+                    anchorEl={anchorEl}
+                    onClose={handleMoreSettingsClickAway}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'center',
+                    }}
+                    slotProps={{
+                      paper: {
+                        sx: {
+                          width: 'auto',
+                          maxWidth: '25%',
+                        },
+                      }
+                    }}
+                  >
+                    <div className="flex flex-col items-center gap-6 p-4">
+                      <div className="flex flex-col w-full gap-2">
+                        <Typography variant="body2" sx={{ color: 'rgb(105, 105, 105)' }}>Input Color</Typography>
+                        <div className="flex-col justify-center">
+                          <ToggleButtonGroup value={color} exclusive onChange={handleColorChange}>
+                            {classic.map((value) => (
+                              <ToggleButton key={value} value={value} sx={{ p: 1 }}>
+                                <div
+                                  style={{
+                                    width: 15,
+                                    height: 15,
+                                    backgroundColor: value,
+                                    display: "inline-block",
+                                  }}
+                                />
+                              </ToggleButton>
+                            ))}
+                          </ToggleButtonGroup>
+                        </div>
+                      </div>
 
-        <MenuItem>
-          <Checkbox checked={horizontalGridLines} onChange={handleHorizontalGridLines} />
-          <ListItemText primary={'Show Horizontal Grid Lines'} />
-        </MenuItem>
+                      <div className="flex flex-col w-full gap-2">
+                        <Typography variant="body2" sx={{ color: 'rgb(105, 105, 105)' }}>Plot Range</Typography>
+                        <div className="grid grid-cols-2 gap-4">
+                          <Box sx={{ maxWidth: 120 }}>
+                            <Grid item>
+                              <TextField
+                                type="number"
+                                label="X Min"
+                                value={xMin}
+                                onChange={e => handleXMin(e.target.value)}
+                                error={!!xMinError}  // Show error state if there's an error message
+                                helperText={xMinError}  // Display the error message
+                                fullWidth
+                              />
+                            </Grid>
+                          </Box>
+                          <Box sx={{ maxWidth: 120 }}>
+                            <Grid item>
+                              <TextField
+                                type="number"
+                                label="X Max"
+                                value={xMax}
+                                onChange={e => handleXMax(e.target.value)}
+                                error={!!xMaxError}  // Show error state if there's an error message
+                                helperText={xMaxError}  // Display the error message
+                                fullWidth
+                              />
+                            </Grid>
+                          </Box>
+                          <Box sx={{ maxWidth: 120 }}>
+                            <Grid item>
+                              <TextField
+                                type="number"
+                                label="Y Min"
+                                value={yMin}
+                                onChange={e => handleYMin(e.target.value)}
+                                error={!!yMinError}  // Show error state if there's an error message
+                                helperText={yMinError}  // Display the error message
+                                fullWidth
+                              />
+                            </Grid>
+                          </Box>
+                          <Box sx={{ maxWidth: 120 }}>
+                            <Grid item>
+                              <TextField
+                                type="number"
+                                label="Y Max"
+                                value={yMax}
+                                onChange={e => handleYMax(e.target.value)}
+                                error={!!yMaxError}  // Show error state if there's an error message
+                                helperText={yMaxError}  // Display the error message
+                                fullWidth
+                              />
+                            </Grid>
+                          </Box>
+                        </div>
+                      </div>
 
-        <MenuItem>
-          <Checkbox checked={verticalGridLines} onChange={handleVerticalGridLines} />
-          <ListItemText primary={'Show Vertical Grid Lines'} />
-        </MenuItem>
+                      <div className="flex flex-col w-full gap-2">
+                        <Typography variant="body2" sx={{ color: 'rgb(105, 105, 105)' }}>Grid Lines</Typography>
+                        <div className="flex flex-col items-start">
+                          <MenuItem>
+                            <Checkbox checked={horizontalGridLines} onChange={handleHorizontalGridLines} />
+                            <ListItemText primary={'Show Horizontal Grid Lines'} />
+                          </MenuItem>
+                          <MenuItem>
+                            <Checkbox checked={verticalGridLines} onChange={handleVerticalGridLines} />
+                            <ListItemText primary={'Show Vertical Grid Lines'} />
+                          </MenuItem>
+                        </div>
+                      </div>
 
-
-        <Button
-          variant="outlined" onClick={handlePlot}>
-          Plot
-        </Button>
+                    </div>
+                  </Popover>
+                </Box>
+              </ClickAwayListener>
+            </Box>
+          </div>
+          <Button
+            variant="outlined" onClick={handlePlot}>
+            Plot
+          </Button>
+        </div>
       </div>
-    </div>
+    </div >
   );
 };
 
